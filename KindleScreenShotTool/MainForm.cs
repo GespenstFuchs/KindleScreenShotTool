@@ -63,6 +63,7 @@ namespace KindleScreenShotTool
         {
             InitializeComponent();
 
+            PressKeyComboBox.SelectedIndex = 0;
             LangComboBox.SelectedIndex = 1;
             ConnectionDirectionComboBox.SelectedIndex = 0;
         }
@@ -115,6 +116,13 @@ namespace KindleScreenShotTool
                     // 撮影待機時間を保持する。
                     int waitingTime = (int)WaitingTimeNumericUpDown.Value;
 
+                    // 押下するキーコードを保持する。
+                    int keyCode = ScreenShotLogic.VK_LEFT;
+                    if (PressKeyComboBox.SelectedIndex == 1)
+                    {
+                        keyCode = ScreenShotLogic.VK_RIGHT;
+                    }
+
                     // Kindleウィンドウをアクティブにする。
                     ScreenShotLogic.ActivateKindleWindow(kindleTitle);
 
@@ -139,8 +147,8 @@ namespace KindleScreenShotTool
                                 captureHeight,
                                 GetSaveFullPath(ScreenShotSaveFolderBrowserDialog.SelectedPath, index, maxLength));
 
-                            // 左キーを押下する。
-                            ScreenShotLogic.LeftKeyDown(kindleTitle);
+                            // キーを押下する。
+                            ScreenShotLogic.KeyDown(kindleTitle, keyCode);
 
                             // プログレス値を設定する。
                             Invoke(() => TaskbarProgress.SetProgressValue(Handle, (ulong)(index + 1), captureCountULong));
@@ -175,6 +183,9 @@ namespace KindleScreenShotTool
         {
             if (Equals(DialogResult.OK, TestScreenShotSaveFileDialog.ShowDialog(this)))
             {
+                // 保存ダイアログが消える前に、スクリーンショットの撮影が始まるため、待機させる。
+                Thread.Sleep(100);
+
                 // スクリーンショットを撮影する。
                 ScreenShotLogic.SaveScreenShot(
                     (int)CaptureStartXNumericUpDown.Value,

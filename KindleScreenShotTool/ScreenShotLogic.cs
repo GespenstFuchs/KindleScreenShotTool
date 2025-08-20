@@ -25,7 +25,22 @@ namespace KindleScreenShotTool
         /// <summary>
         /// メッセージ定数：左キー
         /// </summary>
-        const int VK_LEFT = 0x25;
+        public const int VK_LEFT = 0x25;
+
+        /// <summary>
+        /// メッセージ定数：上キー
+        /// </summary>
+        public const int VK_UP = 0x26;
+
+        /// <summary>
+        /// メッセージ定数：右キー
+        /// </summary>
+        public const int VK_RIGHT = 0x27;
+
+        /// <summary>
+        /// メッセージ定数：下キー
+        /// </summary>
+        public const int VK_DOWN = 0x28;
 
         #endregion
 
@@ -109,19 +124,20 @@ namespace KindleScreenShotTool
         }
 
         /// <summary>
-        /// 左キー押下処理
+        /// キー押下処理
         /// </summary>
         /// <param name="kindleTitle">Kindleウィンドウタイトル</param>
-        public void LeftKeyDown(string kindleTitle)
+        /// <param name="keyCode">キーコード</param>
+        public void KeyDown(string kindleTitle, int keyCode)
         {
             // Kindleウィンドウハンドルを取得し、有無を判定する。
             // （どのタイミングがKindleウィンドウが閉じられるか不明なため、判定を行う。）
             IntPtr hWnd = FindWindow(null, kindleTitle);
             if (hWnd != IntPtr.Zero)
             {
-                // 左キーを押下する。
-                PostMessage(hWnd, WM_KEYDOWN, VK_LEFT, IntPtr.Zero);
-                PostMessage(hWnd, WM_KEYUP, VK_LEFT, IntPtr.Zero);
+                // 指定されたキーコードを押下する。
+                PostMessage(hWnd, WM_KEYDOWN, keyCode, IntPtr.Zero);
+                PostMessage(hWnd, WM_KEYUP, keyCode, IntPtr.Zero);
             }
         }
 

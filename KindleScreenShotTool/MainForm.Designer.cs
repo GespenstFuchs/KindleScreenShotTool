@@ -32,6 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             MainTabControl = new TabControl();
             ScreenShotTabPage = new TabPage();
+            PressKeyComboBox = new ComboBox();
+            label20 = new Label();
+            label18 = new Label();
+            label9 = new Label();
+            WaitingTimeNumericUpDown = new NumericUpDown();
             label6 = new Label();
             CaptureCountNumericUpDown = new NumericUpDown();
             label12 = new Label();
@@ -94,11 +99,9 @@
             PDFSaveFileDialog = new SaveFileDialog();
             PDFImageFolderPathFolderBrowserDialog = new FolderBrowserDialog();
             ConnectionImageSaveFolderBrowserDialog = new FolderBrowserDialog();
-            WaitingTimeNumericUpDown = new NumericUpDown();
-            label9 = new Label();
-            label18 = new Label();
             MainTabControl.SuspendLayout();
             ScreenShotTabPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CaptureCountNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FileNameSerialNumberNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CaptureHeightNumericUpDown).BeginInit();
@@ -110,7 +113,6 @@
             ImageConcatenationTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ImageConcatenationFileNameSerialNumberNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)ConnectionCountNumericUpDown).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).BeginInit();
             SuspendLayout();
             // 
             // MainTabControl
@@ -123,13 +125,15 @@
             MainTabControl.Location = new Point(0, 0);
             MainTabControl.Name = "MainTabControl";
             MainTabControl.SelectedIndex = 0;
-            MainTabControl.Size = new Size(800, 401);
+            MainTabControl.Size = new Size(800, 441);
             MainTabControl.TabIndex = 0;
             // 
             // ScreenShotTabPage
             // 
             ScreenShotTabPage.BackColor = SystemColors.Control;
             ScreenShotTabPage.BorderStyle = BorderStyle.FixedSingle;
+            ScreenShotTabPage.Controls.Add(PressKeyComboBox);
+            ScreenShotTabPage.Controls.Add(label20);
             ScreenShotTabPage.Controls.Add(label18);
             ScreenShotTabPage.Controls.Add(label9);
             ScreenShotTabPage.Controls.Add(WaitingTimeNumericUpDown);
@@ -155,16 +159,62 @@
             ScreenShotTabPage.Location = new Point(4, 30);
             ScreenShotTabPage.Name = "ScreenShotTabPage";
             ScreenShotTabPage.Padding = new Padding(3);
-            ScreenShotTabPage.Size = new Size(792, 367);
+            ScreenShotTabPage.Size = new Size(792, 407);
             ScreenShotTabPage.TabIndex = 0;
             ScreenShotTabPage.Text = "スクリーンショット";
+            // 
+            // PressKeyComboBox
+            // 
+            PressKeyComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            PressKeyComboBox.FormattingEnabled = true;
+            PressKeyComboBox.Items.AddRange(new object[] { "左（←）", "右（→）" });
+            PressKeyComboBox.Location = new Point(151, 290);
+            PressKeyComboBox.Name = "PressKeyComboBox";
+            PressKeyComboBox.Size = new Size(100, 29);
+            PressKeyComboBox.TabIndex = 23;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.Location = new Point(8, 293);
+            label20.Name = "label20";
+            label20.Size = new Size(64, 21);
+            label20.TabIndex = 22;
+            label20.Text = "押下キー";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(229, 257);
+            label18.Name = "label18";
+            label18.Size = new Size(366, 21);
+            label18.TabIndex = 20;
+            label18.Text = "（うまく撮影出来ない場合、この値を調整して下さい。）";
+            // 
+            // label9
+            // 
+            label9.AutoSize = true;
+            label9.Location = new Point(8, 257);
+            label9.Name = "label9";
+            label9.Size = new Size(106, 21);
+            label9.TabIndex = 18;
+            label9.Text = "撮影待機時間";
+            // 
+            // WaitingTimeNumericUpDown
+            // 
+            WaitingTimeNumericUpDown.Location = new Point(151, 255);
+            WaitingTimeNumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            WaitingTimeNumericUpDown.Name = "WaitingTimeNumericUpDown";
+            WaitingTimeNumericUpDown.Size = new Size(72, 29);
+            WaitingTimeNumericUpDown.TabIndex = 19;
+            WaitingTimeNumericUpDown.Value = new decimal(new int[] { 50, 0, 0, 0 });
             // 
             // label6
             // 
             label6.AutoSize = true;
             label6.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 128);
             label6.ForeColor = Color.Red;
-            label6.Location = new Point(8, 307);
+            label6.Location = new Point(8, 342);
             label6.Name = "label6";
             label6.Size = new Size(389, 42);
             label6.TabIndex = 21;
@@ -364,7 +414,7 @@
             OCRTabPage.Location = new Point(4, 24);
             OCRTabPage.Name = "OCRTabPage";
             OCRTabPage.Padding = new Padding(3);
-            OCRTabPage.Size = new Size(792, 373);
+            OCRTabPage.Size = new Size(792, 393);
             OCRTabPage.TabIndex = 1;
             OCRTabPage.Text = "OCR";
             // 
@@ -530,7 +580,7 @@
             PDFTabPage.Controls.Add(PDFExeButton);
             PDFTabPage.Location = new Point(4, 24);
             PDFTabPage.Name = "PDFTabPage";
-            PDFTabPage.Size = new Size(792, 373);
+            PDFTabPage.Size = new Size(792, 393);
             PDFTabPage.TabIndex = 2;
             PDFTabPage.Text = "PDF";
             // 
@@ -593,7 +643,7 @@
             ImageConcatenationTabPage.Controls.Add(ImageConcatenationExeButton);
             ImageConcatenationTabPage.Location = new Point(4, 24);
             ImageConcatenationTabPage.Name = "ImageConcatenationTabPage";
-            ImageConcatenationTabPage.Size = new Size(792, 373);
+            ImageConcatenationTabPage.Size = new Size(792, 393);
             ImageConcatenationTabPage.TabIndex = 3;
             ImageConcatenationTabPage.Text = "画像連結";
             // 
@@ -759,38 +809,11 @@
             ConnectionImageSaveFolderBrowserDialog.Description = "保存するフォルダを選択";
             ConnectionImageSaveFolderBrowserDialog.InitialDirectory = "Environment.SpecialFolder.MyDocuments";
             // 
-            // WaitingTimeNumericUpDown
-            // 
-            WaitingTimeNumericUpDown.Location = new Point(151, 255);
-            WaitingTimeNumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
-            WaitingTimeNumericUpDown.Name = "WaitingTimeNumericUpDown";
-            WaitingTimeNumericUpDown.Size = new Size(72, 29);
-            WaitingTimeNumericUpDown.TabIndex = 19;
-            WaitingTimeNumericUpDown.Value = new decimal(new int[] { 50, 0, 0, 0 });
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(8, 257);
-            label9.Name = "label9";
-            label9.Size = new Size(106, 21);
-            label9.TabIndex = 18;
-            label9.Text = "撮影待機時間";
-            // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(229, 257);
-            label18.Name = "label18";
-            label18.Size = new Size(366, 21);
-            label18.TabIndex = 20;
-            label18.Text = "（うまく撮影出来ない場合、この値を調整して下さい。）";
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(800, 401);
+            ClientSize = new Size(800, 441);
             Controls.Add(MainTabControl);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -800,6 +823,7 @@
             MainTabControl.ResumeLayout(false);
             ScreenShotTabPage.ResumeLayout(false);
             ScreenShotTabPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)CaptureCountNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)FileNameSerialNumberNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)CaptureHeightNumericUpDown).EndInit();
@@ -814,7 +838,6 @@
             ImageConcatenationTabPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)ImageConcatenationFileNameSerialNumberNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)ConnectionCountNumericUpDown).EndInit();
-            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).EndInit();
             ResumeLayout(false);
         }
 
@@ -887,5 +910,7 @@
         private Label label9;
         private NumericUpDown WaitingTimeNumericUpDown;
         private Label label18;
+        private ComboBox PressKeyComboBox;
+        private Label label20;
     }
 }

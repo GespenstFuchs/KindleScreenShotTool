@@ -227,10 +227,12 @@ namespace KindleScreenShotTool
         /// </summary>
         /// <param name="sender">オブジェクト</param>
         /// <param name="e">イベント</param>
-        private void OCRExeButton_Click(object sender, EventArgs e)
+        private async void OCRExeButton_Click(object sender, EventArgs e)
         {
             try
             {
+                OCRExeButton.Enabled = false;
+
                 if (string.IsNullOrEmpty(OCRImageFolderPathTextBox.Text))
                 {
                     ShowMessage("エラー", "画像フォルダパスが未入力です。", MessageBoxIcon.Error);
@@ -290,47 +292,50 @@ namespace KindleScreenShotTool
                 string outputText = string.Empty;
                 int count = 0;
 
-                pngPathList.ForEach(pngPath =>
+                await Task.Run(() =>
                 {
-                    // ループする度に、初期化する。
-                    using var tesseract = new TesseractEngine(langFileFolderPath, lngStr);
-
-                    // 画像を読み込み、テキストを抽出する。
-                    using var pix = Pix.LoadFromFile(pngPath);
-                    Page page = tesseract.Process(pix);
-
-                    if (outputFormatFlg)
+                    pngPathList.ForEach(pngPath =>
                     {
-                        File.WriteAllText(
-                            string.Concat(OCROutputFolderPathFolderBrowserDialog.SelectedPath, @"\", Path.GetFileNameWithoutExtension(pngPath), ".txt"),
-                            page.GetText(),
-                            Encoding.UTF8);
-                    }
-                    else
-                    {
-                        if (string.IsNullOrEmpty(outputText))
+                        // ループする度に、初期化する。
+                        using var tesseract = new TesseractEngine(langFileFolderPath, lngStr);
+
+                        // 画像を読み込み、テキストを抽出する。
+                        using var pix = Pix.LoadFromFile(pngPath);
+                        Page page = tesseract.Process(pix);
+
+                        if (outputFormatFlg)
                         {
-                            outputText = page.GetText();
+                            File.WriteAllText(
+                                string.Concat(OCROutputFolderPathFolderBrowserDialog.SelectedPath, @"\", Path.GetFileNameWithoutExtension(pngPath), ".txt"),
+                                page.GetText(),
+                                Encoding.UTF8);
                         }
                         else
                         {
-                            outputText = string.Concat(outputText, Environment.NewLine, page.GetText());
+                            if (string.IsNullOrEmpty(outputText))
+                            {
+                                outputText = page.GetText();
+                            }
+                            else
+                            {
+                                outputText = string.Concat(outputText, Environment.NewLine, page.GetText());
+                            }
                         }
+
+                        count++;
+
+                        // タイトルに処理件数を設定する。
+                        Invoke(() => Text = $"処理件数：{ConvertNumberWide(count)}／{maxCount}ファイル完了");
+                    });
+
+                    if (!outputFormatFlg)
+                    {
+                        File.WriteAllText(
+                            OCRTextSaveFileDialog.FileName,
+                            outputText,
+                            Encoding.UTF8);
                     }
-
-                    count++;
-
-                    // タイトルに処理件数を設定する。
-                    Invoke(() => Text = $"処理件数：{ConvertNumberWide(count)}／{maxCount}ファイル完了");
                 });
-
-                if (!outputFormatFlg)
-                {
-                    File.WriteAllText(
-                        OCRTextSaveFileDialog.FileName,
-                        outputText,
-                        Encoding.UTF8);
-                }
 
                 ShowMessage("OCR処理完了", "OCR処理が完了しました。", MessageBoxIcon.Information);
             }
@@ -341,6 +346,7 @@ namespace KindleScreenShotTool
             finally
             {
                 Text = "Kindleスクリーンショットツール";
+                OCRExeButton.Enabled = true;
             }
         }
 

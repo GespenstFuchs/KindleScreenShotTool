@@ -216,9 +216,9 @@
             label6.ForeColor = Color.Red;
             label6.Location = new Point(8, 342);
             label6.Name = "label6";
-            label6.Size = new Size(389, 42);
+            label6.Size = new Size(422, 42);
             label6.TabIndex = 21;
-            label6.Text = "※Kindleを前面表示にして、スクリーンショットを撮影します。\r\n　Kindleを最小化せずに、背面表示にして下さい。";
+            label6.Text = "※Kindleを自動で前面表示にし、スクリーンショットを撮影します。\r\n　Kindleを最小化せずに、実行ボタンを押下して下さい。";
             // 
             // CaptureCountNumericUpDown
             // 
@@ -414,7 +414,7 @@
             OCRTabPage.Location = new Point(4, 24);
             OCRTabPage.Name = "OCRTabPage";
             OCRTabPage.Padding = new Padding(3);
-            OCRTabPage.Size = new Size(792, 393);
+            OCRTabPage.Size = new Size(792, 413);
             OCRTabPage.TabIndex = 1;
             OCRTabPage.Text = "OCR";
             // 
@@ -580,7 +580,7 @@
             PDFTabPage.Controls.Add(PDFExeButton);
             PDFTabPage.Location = new Point(4, 24);
             PDFTabPage.Name = "PDFTabPage";
-            PDFTabPage.Size = new Size(792, 393);
+            PDFTabPage.Size = new Size(792, 413);
             PDFTabPage.TabIndex = 2;
             PDFTabPage.Text = "PDF";
             // 
@@ -643,7 +643,7 @@
             ImageConcatenationTabPage.Controls.Add(ImageConcatenationExeButton);
             ImageConcatenationTabPage.Location = new Point(4, 24);
             ImageConcatenationTabPage.Name = "ImageConcatenationTabPage";
-            ImageConcatenationTabPage.Size = new Size(792, 393);
+            ImageConcatenationTabPage.Size = new Size(792, 413);
             ImageConcatenationTabPage.TabIndex = 3;
             ImageConcatenationTabPage.Text = "画像連結";
             // 

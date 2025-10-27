@@ -12,3 +12,6 @@
 8	PageSegMode.SingleWord	画像が単一の単語のみを含む場合。ロゴやラベルなど
 11	PageSegMode.SparseText	テキストが画像全体にばらばらに散在している場合。フォームやレシートなど
 13	PageSegMode.RawLine	テキスト行の歪み補正を行わずにOCRを実行する場合
+
+・Tesseractの言語ファイル
+https://github.com/tesseract-ocr/tessdata

@@ -32,14 +32,20 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             MainTabControl = new TabControl();
             ScreenShotTabPage = new TabPage();
+            label12 = new Label();
+            CaptureCountNumericUpDown = new NumericUpDown();
+            CaptureCountRadioButton = new RadioButton();
+            label26 = new Label();
+            DuplicateCountNumericUpDown = new NumericUpDown();
+            DuplicateCountRadioButton = new RadioButton();
+            label22 = new Label();
+            label21 = new Label();
             PressKeyComboBox = new ComboBox();
             label20 = new Label();
             label18 = new Label();
             label9 = new Label();
             WaitingTimeNumericUpDown = new NumericUpDown();
             label6 = new Label();
-            CaptureCountNumericUpDown = new NumericUpDown();
-            label12 = new Label();
             FileNameSampleLabel = new Label();
             ScreenShotExeButton = new Button();
             TestScreenShotButton = new Button();
@@ -101,8 +107,9 @@
             ConnectionImageSaveFolderBrowserDialog = new FolderBrowserDialog();
             MainTabControl.SuspendLayout();
             ScreenShotTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CaptureCountNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)DuplicateCountNumericUpDown).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)FileNameSerialNumberNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CaptureHeightNumericUpDown).BeginInit();
             ((System.ComponentModel.ISupportInitialize)CaptureStartYNumericUpDown).BeginInit();
@@ -125,21 +132,27 @@
             MainTabControl.Location = new Point(0, 0);
             MainTabControl.Name = "MainTabControl";
             MainTabControl.SelectedIndex = 0;
-            MainTabControl.Size = new Size(800, 441);
+            MainTabControl.Size = new Size(800, 517);
             MainTabControl.TabIndex = 0;
             // 
             // ScreenShotTabPage
             // 
             ScreenShotTabPage.BackColor = SystemColors.Control;
             ScreenShotTabPage.BorderStyle = BorderStyle.FixedSingle;
+            ScreenShotTabPage.Controls.Add(label12);
+            ScreenShotTabPage.Controls.Add(CaptureCountNumericUpDown);
+            ScreenShotTabPage.Controls.Add(CaptureCountRadioButton);
+            ScreenShotTabPage.Controls.Add(label26);
+            ScreenShotTabPage.Controls.Add(DuplicateCountNumericUpDown);
+            ScreenShotTabPage.Controls.Add(DuplicateCountRadioButton);
+            ScreenShotTabPage.Controls.Add(label22);
+            ScreenShotTabPage.Controls.Add(label21);
             ScreenShotTabPage.Controls.Add(PressKeyComboBox);
             ScreenShotTabPage.Controls.Add(label20);
             ScreenShotTabPage.Controls.Add(label18);
             ScreenShotTabPage.Controls.Add(label9);
             ScreenShotTabPage.Controls.Add(WaitingTimeNumericUpDown);
             ScreenShotTabPage.Controls.Add(label6);
-            ScreenShotTabPage.Controls.Add(CaptureCountNumericUpDown);
-            ScreenShotTabPage.Controls.Add(label12);
             ScreenShotTabPage.Controls.Add(FileNameSampleLabel);
             ScreenShotTabPage.Controls.Add(ScreenShotExeButton);
             ScreenShotTabPage.Controls.Add(TestScreenShotButton);
@@ -159,54 +172,131 @@
             ScreenShotTabPage.Location = new Point(4, 30);
             ScreenShotTabPage.Name = "ScreenShotTabPage";
             ScreenShotTabPage.Padding = new Padding(3);
-            ScreenShotTabPage.Size = new Size(792, 407);
+            ScreenShotTabPage.Size = new Size(792, 483);
             ScreenShotTabPage.TabIndex = 0;
             ScreenShotTabPage.Text = "スクリーンショット";
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(113, 356);
+            label12.Name = "label12";
+            label12.Size = new Size(183, 21);
+            label12.TabIndex = 28;
+            label12.Text = "枚撮影したら、終了します。";
+            // 
+            // CaptureCountNumericUpDown
+            // 
+            CaptureCountNumericUpDown.Enabled = false;
+            CaptureCountNumericUpDown.Location = new Point(37, 354);
+            CaptureCountNumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
+            CaptureCountNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            CaptureCountNumericUpDown.Name = "CaptureCountNumericUpDown";
+            CaptureCountNumericUpDown.Size = new Size(72, 29);
+            CaptureCountNumericUpDown.TabIndex = 27;
+            CaptureCountNumericUpDown.Value = new decimal(new int[] { 200, 0, 0, 0 });
+            // 
+            // CaptureCountRadioButton
+            // 
+            CaptureCountRadioButton.AutoSize = true;
+            CaptureCountRadioButton.Location = new Point(17, 360);
+            CaptureCountRadioButton.Name = "CaptureCountRadioButton";
+            CaptureCountRadioButton.Size = new Size(14, 13);
+            CaptureCountRadioButton.TabIndex = 26;
+            CaptureCountRadioButton.UseVisualStyleBackColor = true;
+            CaptureCountRadioButton.CheckedChanged += CaptureCountRadioButton_CheckedChanged;
+            // 
+            // label26
+            // 
+            label26.AutoSize = true;
+            label26.Location = new Point(113, 321);
+            label26.Name = "label26";
+            label26.Size = new Size(391, 21);
+            label26.TabIndex = 25;
+            label26.Text = "枚続けて、同じスクリーンショットが撮影されたら、終了します。";
+            // 
+            // DuplicateCountNumericUpDown
+            // 
+            DuplicateCountNumericUpDown.Location = new Point(37, 319);
+            DuplicateCountNumericUpDown.Minimum = new decimal(new int[] { 2, 0, 0, 0 });
+            DuplicateCountNumericUpDown.Name = "DuplicateCountNumericUpDown";
+            DuplicateCountNumericUpDown.Size = new Size(72, 29);
+            DuplicateCountNumericUpDown.TabIndex = 24;
+            DuplicateCountNumericUpDown.Value = new decimal(new int[] { 2, 0, 0, 0 });
+            // 
+            // DuplicateCountRadioButton
+            // 
+            DuplicateCountRadioButton.AutoSize = true;
+            DuplicateCountRadioButton.Checked = true;
+            DuplicateCountRadioButton.Location = new Point(17, 325);
+            DuplicateCountRadioButton.Name = "DuplicateCountRadioButton";
+            DuplicateCountRadioButton.Size = new Size(14, 13);
+            DuplicateCountRadioButton.TabIndex = 23;
+            DuplicateCountRadioButton.TabStop = true;
+            DuplicateCountRadioButton.UseVisualStyleBackColor = true;
+            DuplicateCountRadioButton.CheckedChanged += DuplicateCountRadioButton_CheckedChanged;
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.Location = new Point(7, 292);
+            label22.Name = "label22";
+            label22.Size = new Size(106, 21);
+            label22.TabIndex = 21;
+            label22.Text = "撮影終了条件";
+            // 
+            // label21
+            // 
+            label21.BorderStyle = BorderStyle.FixedSingle;
+            label21.Location = new Point(7, 306);
+            label21.Name = "label21";
+            label21.Size = new Size(507, 91);
+            label21.TabIndex = 22;
             // 
             // PressKeyComboBox
             // 
             PressKeyComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             PressKeyComboBox.FormattingEnabled = true;
             PressKeyComboBox.Items.AddRange(new object[] { "左（←）", "右（→）" });
-            PressKeyComboBox.Location = new Point(151, 290);
+            PressKeyComboBox.Location = new Point(151, 255);
             PressKeyComboBox.Name = "PressKeyComboBox";
             PressKeyComboBox.Size = new Size(100, 29);
-            PressKeyComboBox.TabIndex = 23;
+            PressKeyComboBox.TabIndex = 20;
             // 
             // label20
             // 
             label20.AutoSize = true;
-            label20.Location = new Point(8, 293);
+            label20.Location = new Point(7, 258);
             label20.Name = "label20";
             label20.Size = new Size(64, 21);
-            label20.TabIndex = 22;
+            label20.TabIndex = 19;
             label20.Text = "押下キー";
             // 
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(229, 257);
+            label18.Location = new Point(229, 222);
             label18.Name = "label18";
-            label18.Size = new Size(366, 21);
-            label18.TabIndex = 20;
-            label18.Text = "（うまく撮影出来ない場合、この値を調整して下さい。）";
+            label18.Size = new Size(47, 21);
+            label18.TabIndex = 18;
+            label18.Text = "ミリ秒";
             // 
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(8, 257);
+            label9.Location = new Point(7, 222);
             label9.Name = "label9";
             label9.Size = new Size(106, 21);
-            label9.TabIndex = 18;
+            label9.TabIndex = 16;
             label9.Text = "撮影待機時間";
             // 
             // WaitingTimeNumericUpDown
             // 
-            WaitingTimeNumericUpDown.Location = new Point(151, 255);
+            WaitingTimeNumericUpDown.Location = new Point(151, 220);
             WaitingTimeNumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             WaitingTimeNumericUpDown.Name = "WaitingTimeNumericUpDown";
             WaitingTimeNumericUpDown.Size = new Size(72, 29);
-            WaitingTimeNumericUpDown.TabIndex = 19;
+            WaitingTimeNumericUpDown.TabIndex = 17;
             WaitingTimeNumericUpDown.Value = new decimal(new int[] { 50, 0, 0, 0 });
             // 
             // label6
@@ -214,38 +304,19 @@
             label6.AutoSize = true;
             label6.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 128);
             label6.ForeColor = Color.Red;
-            label6.Location = new Point(8, 342);
+            label6.Location = new Point(7, 417);
             label6.Name = "label6";
             label6.Size = new Size(422, 42);
-            label6.TabIndex = 21;
+            label6.TabIndex = 29;
             label6.Text = "※Kindleを自動で前面表示にし、スクリーンショットを撮影します。\r\n　Kindleを最小化せずに、実行ボタンを押下して下さい。";
-            // 
-            // CaptureCountNumericUpDown
-            // 
-            CaptureCountNumericUpDown.Location = new Point(151, 185);
-            CaptureCountNumericUpDown.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
-            CaptureCountNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-            CaptureCountNumericUpDown.Name = "CaptureCountNumericUpDown";
-            CaptureCountNumericUpDown.Size = new Size(72, 29);
-            CaptureCountNumericUpDown.TabIndex = 14;
-            CaptureCountNumericUpDown.Value = new decimal(new int[] { 10, 0, 0, 0 });
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(8, 187);
-            label12.Name = "label12";
-            label12.Size = new Size(74, 21);
-            label12.TabIndex = 13;
-            label12.Text = "撮影枚数";
             // 
             // FileNameSampleLabel
             // 
             FileNameSampleLabel.AutoSize = true;
-            FileNameSampleLabel.Location = new Point(229, 222);
+            FileNameSampleLabel.Location = new Point(229, 187);
             FileNameSampleLabel.Name = "FileNameSampleLabel";
             FileNameSampleLabel.Size = new Size(192, 21);
-            FileNameSampleLabel.TabIndex = 17;
+            FileNameSampleLabel.TabIndex = 15;
             FileNameSampleLabel.Text = "サンプルファイル名：000.png";
             // 
             // ScreenShotExeButton
@@ -272,22 +343,22 @@
             // 
             // FileNameSerialNumberNumericUpDown
             // 
-            FileNameSerialNumberNumericUpDown.Location = new Point(151, 220);
+            FileNameSerialNumberNumericUpDown.Location = new Point(151, 185);
             FileNameSerialNumberNumericUpDown.Maximum = new decimal(new int[] { 5, 0, 0, 0 });
             FileNameSerialNumberNumericUpDown.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             FileNameSerialNumberNumericUpDown.Name = "FileNameSerialNumberNumericUpDown";
             FileNameSerialNumberNumericUpDown.Size = new Size(72, 29);
-            FileNameSerialNumberNumericUpDown.TabIndex = 16;
+            FileNameSerialNumberNumericUpDown.TabIndex = 14;
             FileNameSerialNumberNumericUpDown.Value = new decimal(new int[] { 3, 0, 0, 0 });
             FileNameSerialNumberNumericUpDown.ValueChanged += FileNameSerialNumberNumericUpDown_ValueChanged;
             // 
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(7, 222);
+            label7.Location = new Point(7, 187);
             label7.Name = "label7";
             label7.Size = new Size(135, 21);
-            label7.TabIndex = 15;
+            label7.TabIndex = 13;
             label7.Text = "ファイル名連番桁数";
             // 
             // CaptureHeightNumericUpDown
@@ -414,7 +485,7 @@
             OCRTabPage.Location = new Point(4, 24);
             OCRTabPage.Name = "OCRTabPage";
             OCRTabPage.Padding = new Padding(3);
-            OCRTabPage.Size = new Size(792, 413);
+            OCRTabPage.Size = new Size(792, 489);
             OCRTabPage.TabIndex = 1;
             OCRTabPage.Text = "OCR";
             // 
@@ -580,7 +651,7 @@
             PDFTabPage.Controls.Add(PDFExeButton);
             PDFTabPage.Location = new Point(4, 24);
             PDFTabPage.Name = "PDFTabPage";
-            PDFTabPage.Size = new Size(792, 413);
+            PDFTabPage.Size = new Size(792, 489);
             PDFTabPage.TabIndex = 2;
             PDFTabPage.Text = "PDF";
             // 
@@ -643,7 +714,7 @@
             ImageConcatenationTabPage.Controls.Add(ImageConcatenationExeButton);
             ImageConcatenationTabPage.Location = new Point(4, 24);
             ImageConcatenationTabPage.Name = "ImageConcatenationTabPage";
-            ImageConcatenationTabPage.Size = new Size(792, 413);
+            ImageConcatenationTabPage.Size = new Size(792, 489);
             ImageConcatenationTabPage.TabIndex = 3;
             ImageConcatenationTabPage.Text = "画像連結";
             // 
@@ -813,7 +884,7 @@
             // 
             AutoScaleDimensions = new SizeF(96F, 96F);
             AutoScaleMode = AutoScaleMode.Dpi;
-            ClientSize = new Size(800, 441);
+            ClientSize = new Size(800, 517);
             Controls.Add(MainTabControl);
             Font = new Font("Yu Gothic UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 128);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -823,8 +894,9 @@
             MainTabControl.ResumeLayout(false);
             ScreenShotTabPage.ResumeLayout(false);
             ScreenShotTabPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)CaptureCountNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)DuplicateCountNumericUpDown).EndInit();
+            ((System.ComponentModel.ISupportInitialize)WaitingTimeNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)FileNameSerialNumberNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)CaptureHeightNumericUpDown).EndInit();
             ((System.ComponentModel.ISupportInitialize)CaptureStartYNumericUpDown).EndInit();
@@ -912,5 +984,11 @@
         private Label label18;
         private ComboBox PressKeyComboBox;
         private Label label20;
+        private Label label22;
+        private Label label21;
+        private RadioButton DuplicateCountRadioButton;
+        private NumericUpDown DuplicateCountNumericUpDown;
+        private Label label26;
+        private RadioButton CaptureCountRadioButton;
     }
 }

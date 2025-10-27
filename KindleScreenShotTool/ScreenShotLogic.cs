@@ -182,6 +182,58 @@ namespace KindleScreenShotTool
             magickImage.Write(saveFileName);
         }
 
+        /// <summary>
+        /// 画像比較処理
+        /// </summary>
+        /// <param name="pngPath1">PNG画像パス１</param>
+        /// <param name="pngPath2">PNG画像パス２</param>
+        /// <returns>比較結果（true：一致・false：不一致）</returns>
+        public bool CompareImage(string pngPath1, string pngPath2)
+        {
+            // 画像を読み込む。
+            using Bitmap bmp1 = new(pngPath1);
+            using Bitmap bmp2 = new(pngPath2);
+
+            // サイズを判定する。
+            if (bmp1.Width != bmp2.Width || bmp1.Height != bmp2.Height)
+            {
+                return false;
+            }
+
+            // 画像データに直接アクセスするため、ロックする。
+            var data1 = bmp1.LockBits(new Rectangle(0, 0, bmp1.Width, bmp1.Height), ImageLockMode.ReadOnly, bmp1.PixelFormat);
+            var data2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height), ImageLockMode.ReadOnly, bmp2.PixelFormat);
+
+            try
+            {
+                // 画像のバイト数を算出し、バッファを確保する。
+                int bytes = Math.Abs(data1.Stride) * bmp1.Height;
+                byte[] buffer1 = new byte[bytes];
+                byte[] buffer2 = new byte[bytes];
+
+                // 各画像データをバイト配列にコピーする。
+                Marshal.Copy(data1.Scan0, buffer1, 0, bytes);
+                Marshal.Copy(data2.Scan0, buffer2, 0, bytes);
+
+                // バイト配列を比較する。
+                for (int index = 0; index < bytes; index++)
+                {
+                    if (buffer1[index] != buffer2[index])
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+            finally
+            {
+                // ロックを解除する。
+                bmp1.UnlockBits(data1);
+                bmp2.UnlockBits(data2);
+            }
+        }
+
         #endregion
     }
 }

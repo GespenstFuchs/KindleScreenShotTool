@@ -129,29 +129,104 @@ namespace KindleScreenShotTool
                     // 保存ダイアログが消える前に、スクリーンショットの撮影が始まるため、待機させる。
                     Thread.Sleep(100);
 
+                    // 撮影終了条件フラグを設定する。
+                    bool captureEndConditionFlg = DuplicateCountRadioButton.Checked;
+
+                    // 重複枚数を保持する（ＵＩ上分かりやすく２から入力させているので、デクリメントする。）。
+                    int duplicateCount = (int)DuplicateCountNumericUpDown.Value;
+                    duplicateCount--;
+
                     await Task.Run(async () =>
                     {
                         // タスクバーのプログレス状態を設定する。
                         Invoke(() => TaskbarProgress.SetProgressState(Handle, TaskbarProgressState.Normal));
 
-                        for (int index = 0; index < captureCount; index++)
+                        int index = 0;
+
+                        // 撮影終了条件フラグを判定する。
+                        if (captureEndConditionFlg)
                         {
-                            // 早すぎると、うまく撮影出来ないため、待機させる。
-                            await Task.Delay(waitingTime);
+                            string saveFullPath = string.Empty;
+                            string beforeSaveFullPath = string.Empty;
+                            int fileCount = 0;
+                            int matchCount = 0;
 
-                            // スクリーンショットを撮影する。
-                            ScreenShotLogic.SaveScreenShot(
-                                captureStartX,
-                                captureStartY,
-                                captureWidth,
-                                captureHeight,
-                                GetSaveFullPath(ScreenShotSaveFolderBrowserDialog.SelectedPath, index, maxLength));
+                            do
+                            {
+                                // 保存ファイル名を保持する。
+                                saveFullPath = GetSaveFullPath(ScreenShotSaveFolderBrowserDialog.SelectedPath, fileCount, maxLength);
 
-                            // キーを押下する。
-                            ScreenShotLogic.KeyDown(kindleTitle, keyCode);
+                                // ファイル数をインクリメントする。
+                                fileCount++;
 
-                            // プログレス値を設定する。
-                            Invoke(() => TaskbarProgress.SetProgressValue(Handle, (ulong)(index + 1), captureCountULong));
+                                // 早すぎると、うまく撮影出来ないため、待機させる。
+                                await Task.Delay(waitingTime);
+
+                                // スクリーンショットを撮影する。
+                                ScreenShotLogic.SaveScreenShot(
+                                    captureStartX,
+                                    captureStartY,
+                                    captureWidth,
+                                    captureHeight,
+                                    saveFullPath);
+
+                                // 前回保存ファイル名の有無を判定する。
+                                if (!string.IsNullOrEmpty(beforeSaveFullPath))
+                                {
+                                    // 画像ファイルを比較する。
+                                    if (ScreenShotLogic.CompareImage(beforeSaveFullPath, saveFullPath))
+                                    {
+                                        // 一致する場合
+                                        matchCount++;
+                                    }
+                                    else
+                                    {
+                                        // 一致しない場合
+                                        matchCount = 0;
+                                    }
+                                }
+
+                                // 前回保存ファイル名を保持する。
+                                beforeSaveFullPath = saveFullPath;
+
+                                // キーを押下する。
+                                ScreenShotLogic.KeyDown(kindleTitle, keyCode);
+
+                                // プログレス値を設定する。
+                                Invoke(() => TaskbarProgress.SetProgressValue(Handle, (ulong)(index + 1), 20));
+                                if (index == 19)
+                                {
+                                    index = 0;
+                                }
+                                else
+                                {
+                                    index++;
+                                }
+
+                            } while (duplicateCount != matchCount);
+                        }
+                        else
+                        {
+                            // 撮影枚数の場合
+                            for (index = 0; index < captureCount; index++)
+                            {
+                                // 早すぎると、うまく撮影出来ないため、待機させる。
+                                await Task.Delay(waitingTime);
+
+                                // スクリーンショットを撮影する。
+                                ScreenShotLogic.SaveScreenShot(
+                                    captureStartX,
+                                    captureStartY,
+                                    captureWidth,
+                                    captureHeight,
+                                    GetSaveFullPath(ScreenShotSaveFolderBrowserDialog.SelectedPath, index, maxLength));
+
+                                // キーを押下する。
+                                ScreenShotLogic.KeyDown(kindleTitle, keyCode);
+
+                                // プログレス値を設定する。
+                                Invoke(() => TaskbarProgress.SetProgressValue(Handle, (ulong)(index + 1), captureCountULong));
+                            }
                         }
                     });
 
@@ -216,6 +291,28 @@ namespace KindleScreenShotTool
         private void FileNameSerialNumberNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
             FileNameSampleLabel.Text = $@"サンプルファイル名：{new string('0', (int)FileNameSerialNumberNumericUpDown.Value)}.png";
+        }
+
+        /// <summary>
+        /// 重複枚数ラジオボタンチェック変更処理
+        /// </summary>
+        /// <param name="sender">オブジェクト</param>
+        /// <param name="e">イベント</param>
+        private void DuplicateCountRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            DuplicateCountNumericUpDown.Enabled = DuplicateCountRadioButton.Checked;
+            CaptureCountNumericUpDown.Enabled = CaptureCountRadioButton.Checked;
+        }
+
+        /// <summary>
+        /// 撮影枚数ラジオボタンチェック変更処理
+        /// </summary>
+        /// <param name="sender">オブジェクト</param>
+        /// <param name="e">イベント</param>
+        private void CaptureCountRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            DuplicateCountNumericUpDown.Enabled = DuplicateCountRadioButton.Checked;
+            CaptureCountNumericUpDown.Enabled = CaptureCountRadioButton.Checked;
         }
 
         #endregion
@@ -379,10 +476,12 @@ namespace KindleScreenShotTool
         /// </summary>
         /// <param name="sender">オブジェクト</param>
         /// <param name="e">イベント</param>
-        private void PDFExeButton_Click(object sender, EventArgs e)
+        private async void PDFExeButton_Click(object sender, EventArgs e)
         {
             try
             {
+                PDFExeButton.Enabled = false;
+
                 if (string.IsNullOrEmpty(PDFImageFolderPathTextBox.Text))
                 {
                     ShowMessage("エラー", "画像フォルダパスが未入力です。", MessageBoxIcon.Error);
@@ -400,28 +499,33 @@ namespace KindleScreenShotTool
 
                 if (Equals(DialogResult.OK, PDFSaveFileDialog.ShowDialog(this)))
                 {
-                    // 拡張子が、【.png】（大文字・小文字問わず）のフルパスを取得し、処理を行う。
-                    using MagickImageCollection imageCollection = [.. Directory.EnumerateFiles(pdfImageFolderPath, "*.png", SearchOption.TopDirectoryOnly)
-                        .Where(path => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-                        .OrderBy(path => Path.GetFileName(path))
-                        .Select(pngPath =>
-                        {
-                            // 画像をPDF形式として読み込み、プロファイルを削除する。
-                            var img = new MagickImage(pngPath)
+                    string fileName = PDFSaveFileDialog.FileName;
+
+                    await Task.Run(() =>
+                    {
+                        // 拡張子が、【.png】（大文字・小文字問わず）のフルパスを取得し、処理を行う。
+                        using MagickImageCollection imageCollection = [.. Directory.EnumerateFiles(pdfImageFolderPath, "*.png", SearchOption.TopDirectoryOnly)
+                            .Where(path => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(path => Path.GetFileName(path))
+                            .Select(pngPath =>
                             {
-                                Format = MagickFormat.Pdf
-                            };
-                            img.Strip();
-                            return img;
-                        })];
+                                // 画像をPDF形式として読み込み、プロファイルを削除する。
+                                var img = new MagickImage(pngPath)
+                                {
+                                    Format = MagickFormat.Pdf
+                                };
+                                img.Strip();
+                                return img;
+                            })];
 
-                    // 画像コレクションをメモリストリームに書き込む。
-                    using MemoryStream memStream = new();
-                    imageCollection.Write(memStream);
-                    memStream.Position = 0;
+                        // 画像コレクションをメモリストリームに書き込む。
+                        using MemoryStream memStream = new();
+                        imageCollection.Write(memStream);
+                        memStream.Position = 0;
 
-                    // PDFファイルとして保存する。
-                    File.WriteAllBytes(PDFSaveFileDialog.FileName, memStream.ToArray());
+                        // PDFファイルとして保存する。
+                        File.WriteAllBytes(fileName, memStream.ToArray());
+                    });
 
                     ShowMessage("PDF作成完了", "PDFの作成が完了しました。", MessageBoxIcon.Information);
                 }
@@ -429,6 +533,10 @@ namespace KindleScreenShotTool
             catch (Exception ex)
             {
                 ShowMessage("エラー", ex.Message, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                PDFExeButton.Enabled = true;
             }
         }
 
@@ -451,10 +559,12 @@ namespace KindleScreenShotTool
         /// </summary>
         /// <param name="sender">オブジェクト</param>
         /// <param name="e">イベント</param>
-        private void ImageConcatenationExeButton_Click(object sender, EventArgs e)
+        private async void ImageConcatenationExeButton_Click(object sender, EventArgs e)
         {
             try
             {
+                ImageConcatenationExeButton.Enabled = false;
+
                 if (string.IsNullOrEmpty(ImageConcatenationImageFolderPathTextBox.Text))
                 {
                     ShowMessage("エラー", "画像フォルダパスが未入力です。", MessageBoxIcon.Error);
@@ -481,30 +591,32 @@ namespace KindleScreenShotTool
                     // ファイル名連番桁数を保持する。
                     int maxLength = (int)ImageConcatenationFileNameSerialNumberNumericUpDown.Value;
 
-                    // 拡張子が、【.png】（大文字・小文字問わず）の全ファイルを取得し、リストにする。
-                    var pngFileList = Directory.EnumerateFiles(imageFolderPath, "*.png", SearchOption.TopDirectoryOnly)
-                        .Where(path => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-                        .OrderBy(Path.GetFileName)
-                        .ToList();
-
-                    string maxCount = ConvertNumberWide(pngFileList.Count);
-
-                    // リストを分割する。
-                    string[][] splitArray = pngFileList.Chunk(connectionCount).ToArray();
-
-                    int count = 0;
-
-                    for (int index = 0; index < splitArray.Length; index++)
+                    await Task.Run(() =>
                     {
-                        var pngFilePathAr = splitArray[index];
+                        // 拡張子が、【.png】（大文字・小文字問わず）の全ファイルを取得し、リストにする。
+                        var pngFileList = Directory.EnumerateFiles(imageFolderPath, "*.png", SearchOption.TopDirectoryOnly)
+                            .Where(path => path.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(Path.GetFileName)
+                            .ToList();
 
-                        // 連結方向を判定する。
-                        if (Equals(1, connectionDirection) || Equals(3, connectionDirection))
+                        string maxCount = ConvertNumberWide(pngFileList.Count);
+
+                        // リストを分割する。
+                        string[][] splitArray = [.. pngFileList.Chunk(connectionCount)];
+
+                        int count = 0;
+
+                        for (int index = 0; index < splitArray.Length; index++)
                         {
-                            pngFilePathAr = [.. pngFilePathAr.OrderByDescending(pngFilePath => pngFilePath)];
-                        }
+                            var pngFilePathAr = splitArray[index];
 
-                        using MagickImageCollection collection = [.. pngFilePathAr
+                            // 連結方向を判定する。
+                            if (Equals(1, connectionDirection) || Equals(3, connectionDirection))
+                            {
+                                pngFilePathAr = [.. pngFilePathAr.OrderByDescending(pngFilePath => pngFilePath)];
+                            }
+
+                            using MagickImageCollection collection = [.. pngFilePathAr
                             .Select(pngFilePath =>
                             {
                                 // 画像をPDF形式として読み込み、プロファイルを削除する。
@@ -513,16 +625,17 @@ namespace KindleScreenShotTool
                                 return img;
                             })];
 
-                        // 連結方向を判定し、画像を連携し、連結画像を保存する。
-                        using var finalImage = (connectionDirection == 0 || connectionDirection == 1)
-                            ? collection.AppendVertically() : collection.AppendHorizontally();
-                        finalImage.Write(GetSaveFullPath(ConnectionImageSaveFolderBrowserDialog.SelectedPath, index, maxLength));
+                            // 連結方向を判定し、画像を連携し、連結画像を保存する。
+                            using var finalImage = (connectionDirection == 0 || connectionDirection == 1)
+                                ? collection.AppendVertically() : collection.AppendHorizontally();
+                            finalImage.Write(GetSaveFullPath(ConnectionImageSaveFolderBrowserDialog.SelectedPath, index, maxLength));
 
-                        count += collection.Count;
+                            count += collection.Count;
 
-                        // タイトルに処理件数を設定する。
-                        Invoke(() => Text = $"処理件数：{ConvertNumberWide(count)}／{maxCount}ファイル完了");
-                    }
+                            // タイトルに処理件数を設定する。
+                            Invoke(() => Text = $"処理件数：{ConvertNumberWide(count)}／{maxCount}ファイル完了");
+                        }
+                    });
 
                     ShowMessage("画像連結完了", "画像の連結が完了しました。", MessageBoxIcon.Information);
                 }
@@ -534,6 +647,7 @@ namespace KindleScreenShotTool
             finally
             {
                 Text = "Kindleスクリーンショットツール";
+                ImageConcatenationExeButton.Enabled = true;
             }
         }
 

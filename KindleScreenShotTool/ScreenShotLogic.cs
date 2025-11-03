@@ -191,31 +191,51 @@ namespace KindleScreenShotTool
         public bool CompareImage(string pngPath1, string pngPath2)
         {
             // 画像を読み込む。
-            using Bitmap bmp1 = new(pngPath1);
-            using Bitmap bmp2 = new(pngPath2);
+            using Bitmap src1 = new(pngPath1);
+            using Bitmap src2 = new(pngPath2);
 
             // サイズを判定する。
-            if (bmp1.Width != bmp2.Width || bmp1.Height != bmp2.Height)
+            if (src1.Width != src2.Width || src1.Height != src2.Height)
             {
                 return false;
             }
 
-            // 画像データに直接アクセスするため、ロックする。
-            var data1 = bmp1.LockBits(new Rectangle(0, 0, bmp1.Width, bmp1.Height), ImageLockMode.ReadOnly, bmp1.PixelFormat);
-            var data2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height), ImageLockMode.ReadOnly, bmp2.PixelFormat);
+            // ピクセルフォーマットを統一してクローンする。
+            // （画像の内部形式が違うと、stride（１行あたりのバイト数）や、メモリ配置が異なり、
+            // Marshal.Copy時にメモリ破壊が起こる可能性がある。
+            // これを防ぐため、統一して【32bppArgb】でクローンを作る。）
+            using Bitmap bmp1 = src1.Clone(new Rectangle(0, 0, src1.Width, src1.Height), PixelFormat.Format32bppArgb);
+            using Bitmap bmp2 = src2.Clone(new Rectangle(0, 0, src2.Width, src2.Height), PixelFormat.Format32bppArgb);
+
+            // 画像データに直接アクセスするため、メモリをロックする。
+            // （LockBitsでピクセルデータ領域を確保し、Scan0からポインタを取得する。）
+            var rect = new Rectangle(0, 0, bmp1.Width, bmp1.Height);
+            var data1 = bmp1.LockBits(rect, ImageLockMode.ReadOnly, bmp1.PixelFormat);
+            var data2 = bmp2.LockBits(rect, ImageLockMode.ReadOnly, bmp2.PixelFormat);
 
             try
             {
-                // 画像のバイト数を算出し、バッファを確保する。
-                int bytes = Math.Abs(data1.Stride) * bmp1.Height;
+                // 各画像の strideを取得する。
+                int stride1 = Math.Abs(data1.Stride);
+                int stride2 = Math.Abs(data2.Stride);
+
+                // strideを比較する。
+                if (stride1 != stride2)
+                {
+                    return false;
+                }
+
+                // バイト配列のサイズを算出する。
+                int bytes = stride1 * bmp1.Height;
+
+                // ピクセルデータをバイト配列にコピーする。
                 byte[] buffer1 = new byte[bytes];
                 byte[] buffer2 = new byte[bytes];
 
-                // 各画像データをバイト配列にコピーする。
                 Marshal.Copy(data1.Scan0, buffer1, 0, bytes);
                 Marshal.Copy(data2.Scan0, buffer2, 0, bytes);
 
-                // バイト配列を比較する。
+                // バイト単位で比較する。
                 for (int index = 0; index < bytes; index++)
                 {
                     if (buffer1[index] != buffer2[index])
